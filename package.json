@@ -1,0 +1,46 @@
+{
+  "name": "@nodestrap/action-control",
+  "version": "4.0.0",
+  "description": "A generic element with press/release state.",
+  "type": "module",
+  "main": "dist/ActionControl.jsx",
+  "types": "dist/ActionControl.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nodestrap/action-control.git"
+  },
+  "keywords": [
+    "action",
+    "clickable",
+    "control",
+    "controllable",
+    "component",
+    "basic",
+    "generic",
+    "element",
+    "react",
+    "nodestrap",
+    "styled"
+  ],
+  "author": "heymarco",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nodestrap/action-control/issues"
+  },
+  "homepage": "https://github.com/nodestrap/action-control#readme",
+  "dependencies": {
+    "@cssfn/css-config": "^1.0.1",
+    "@cssfn/css-types": "^1.0.2",
+    "@cssfn/css-var": "^1.0.2",
+    "@cssfn/cssfn": "^1.0.3",
+    "@cssfn/react-cssfn": "^1.0.3",
+    "@nodestrap/accessibilities": "^4.0.1",
+    "@nodestrap/basic": "^4.0.1",
+    "@nodestrap/control": "^4.0.1",
+    "@types/react": "^17.0.35",
+    "react": "^17.0.2"
+  }
+}
