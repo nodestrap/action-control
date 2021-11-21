@@ -347,8 +347,9 @@ export const usesActionControlStates = () => {
         ]),
     ]);
 };
-export const usesActionControl = () => {
-    return composition([
+
+export const useActionControlSheet = createUseSheet(() => [
+    mainComposition([
         imports([
             // layouts:
             usesActionControlLayout(),
@@ -358,14 +359,6 @@ export const usesActionControl = () => {
             
             // states:
             usesActionControlStates(),
-        ]),
-    ]);
-};
-
-export const useActionControlSheet = createUseSheet(() => [
-    mainComposition([
-        imports([
-            usesActionControl(),
         ]),
     ]),
 ]);

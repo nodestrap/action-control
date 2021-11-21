@@ -236,8 +236,8 @@ export const usesActionControlStates = () => {
         ]),
     ]);
 };
-export const usesActionControl = () => {
-    return composition([
+export const useActionControlSheet = createUseSheet(() => [
+    mainComposition([
         imports([
             // layouts:
             usesActionControlLayout(),
@@ -245,13 +245,6 @@ export const usesActionControl = () => {
             usesActionControlVariants(),
             // states:
             usesActionControlStates(),
-        ]),
-    ]);
-};
-export const useActionControlSheet = createUseSheet(() => [
-    mainComposition([
-        imports([
-            usesActionControl(),
         ]),
     ]),
 ]);

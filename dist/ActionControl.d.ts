@@ -32,7 +32,6 @@ export declare const usePressReleaseState: (props: ActionControlProps, mouses?: 
 export declare const usesActionControlLayout: () => StyleCollection;
 export declare const usesActionControlVariants: () => StyleCollection;
 export declare const usesActionControlStates: () => StyleCollection;
-export declare const usesActionControl: () => StyleCollection;
 export declare const useActionControlSheet: import("@cssfn/types").Factory<import("jss").Classes<"main">>;
 export declare const cssProps: import("@cssfn/css-config").Refs<{
     cursor: string;
