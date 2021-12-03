@@ -423,6 +423,34 @@ export const [cssProps, cssDecls, cssVals, cssConfig] = createCssConfig(() => {
 
 
 
+// utilities:
+export const isReactRouterLink = (children: React.ReactNode|undefined): children is React.ReactElement<{ children?: React.ReactNode, component?: React.ReactElement }> => {
+    return (
+        React.isValidElement(children)
+        &&
+        (typeof(children.type) === 'object')
+        &&
+        (typeof((children.type as any).render) === 'function')
+        &&
+        ((children.type as any).render.name === 'LinkWithRef')
+        &&
+        !!children.props.to
+    );
+};
+export const isNextLink = (children: React.ReactNode|undefined): children is React.ReactElement<{ children?: React.ReactNode, passHref?: boolean }> => {
+    return (
+        React.isValidElement(children)
+        &&
+        (typeof(children.type) === 'function')
+        &&
+        (children.type.name === 'Link')
+        &&
+        !!children.props.href
+    );
+};
+
+
+
 // react components:
 
 export interface ActionControlProps<TElement extends HTMLElement = HTMLElement>
@@ -449,7 +477,8 @@ export function ActionControl<TElement extends HTMLElement = HTMLElement>(props:
     
     
     // jsx:
-    return (
+    const children = props.children;
+    const mainComponent = (
         <Control<TElement>
             // other props:
             {...props}
@@ -481,5 +510,23 @@ export function ActionControl<TElement extends HTMLElement = HTMLElement>(props:
             }}
         />
     );
+    
+    if (isReactRouterLink(children)) {
+        return React.cloneElement(children, { children: null, component:
+            React.cloneElement(mainComponent, { children:
+                children.props.children
+            })
+        });
+    } // if
+    
+    if (isNextLink(children)) {
+        return React.cloneElement(children, { passHref: true, children:
+            React.cloneElement(mainComponent, { children:
+                children.props.children
+            })
+        });
+    } // if
+    
+    return mainComponent;
 }
 export { ActionControl as default }

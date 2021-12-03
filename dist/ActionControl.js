@@ -290,6 +290,27 @@ export const [cssProps, cssDecls, cssVals, cssConfig] = createCssConfig(() => {
         //#endregion animations
     };
 }, { prefix: 'act' });
+// utilities:
+export const isReactRouterLink = (children) => {
+    return (React.isValidElement(children)
+        &&
+            (typeof (children.type) === 'object')
+        &&
+            (typeof (children.type.render) === 'function')
+        &&
+            (children.type.render.name === 'LinkWithRef')
+        &&
+            !!children.props.to);
+};
+export const isNextLink = (children) => {
+    return (React.isValidElement(children)
+        &&
+            (typeof (children.type) === 'function')
+        &&
+            (children.type.name === 'Link')
+        &&
+            !!children.props.href);
+};
 export function ActionControl(props) {
     // styles:
     const sheet = useActionControlSheet();
@@ -298,7 +319,8 @@ export function ActionControl(props) {
     // fn props:
     const propEnabled = usePropEnabled(props);
     // jsx:
-    return (React.createElement(Control, { ...props, 
+    const children = props.children;
+    const mainComponent = (React.createElement(Control, { ...props, 
         // semantics:
         semanticTag: props.semanticTag ?? [null, 'button', 'a'], semanticRole: props.semanticRole ?? ['button', 'link'], 
         // classes:
@@ -311,5 +333,16 @@ export function ActionControl(props) {
             // states:
             pressReleaseState.handleAnimationEnd(e);
         } }));
+    if (isReactRouterLink(children)) {
+        return React.cloneElement(children, { children: null, component: React.cloneElement(mainComponent, { children: children.props.children
+            })
+        });
+    } // if
+    if (isNextLink(children)) {
+        return React.cloneElement(children, { passHref: true, children: React.cloneElement(mainComponent, { children: children.props.children
+            })
+        });
+    } // if
+    return mainComponent;
 }
 export { ActionControl as default };
