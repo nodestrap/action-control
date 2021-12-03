@@ -57,6 +57,7 @@ export declare const cssProps: import("@cssfn/css-config").Refs<{
 }>, cssConfig: import("@cssfn/css-config").CssConfigSettings;
 export declare const isReactRouterLink: (children: React.ReactNode | undefined) => children is React.ReactElement<{
     children?: React.ReactNode;
+    passHref?: boolean | undefined;
     component?: React.ReactElement<any, string | React.JSXElementConstructor<any>> | undefined;
 }, string | React.JSXElementConstructor<any>>;
 export declare const isNextLink: (children: React.ReactNode | undefined) => children is React.ReactElement<{

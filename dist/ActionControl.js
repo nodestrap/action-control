@@ -21,6 +21,9 @@ usePropEnabled, usePropReadOnly, } from '@nodestrap/accessibilities';
 // nodestrap components:
 import { 
 // hooks:
+useTestSemantic, } from '@nodestrap/element';
+import { 
+// hooks:
 usesSizeVariant, usesAnim, fallbackNoneFilter, } from '@nodestrap/basic';
 import { 
 // hooks:
@@ -333,14 +336,22 @@ export function ActionControl(props) {
             // states:
             pressReleaseState.handleAnimationEnd(e);
         } }));
-    if (isReactRouterLink(children)) {
-        return React.cloneElement(children, { children: null, component: React.cloneElement(mainComponent, { children: children.props.children
-            })
+    const reactRouterLink = isReactRouterLink(children);
+    const nextLink = !reactRouterLink && isNextLink(children);
+    if (reactRouterLink || nextLink) {
+        const semanticTag = props.semanticTag ?? 'a';
+        const semanticRole = props.semanticRole ?? 'link';
+        const [, , , isSemanticLink] = useTestSemantic({ tag: props.tag, role: props.role, semanticTag, semanticRole }, { semanticTag: 'a', semanticRole: 'link' });
+        const nestedComponent = React.cloneElement(mainComponent, {
+            children: children.props.children,
+            // semantics:
+            semanticTag,
+            semanticRole,
         });
-    } // if
-    if (isNextLink(children)) {
-        return React.cloneElement(children, { passHref: true, children: React.cloneElement(mainComponent, { children: children.props.children
-            })
+        if (reactRouterLink)
+            return React.cloneElement(children, { passHref: isSemanticLink, children: null, component: nestedComponent
+            });
+        return React.cloneElement(children, { passHref: isSemanticLink, children: nestedComponent
         });
     } // if
     return mainComponent;
