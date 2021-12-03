@@ -111,7 +111,10 @@ export const usePressReleaseState = (props, mouses = [0], keys = ['space']) => {
         if (props.press !== undefined)
             return; // controllable [press] is set => no uncontrollable required
         // handlers:
+        let mounted = true;
         const handleRelease = () => {
+            if (!mounted)
+                return; // `setTimeout` fires after the component was unmounted => ignore
             setPressDn(false);
         };
         // setups:
@@ -119,6 +122,7 @@ export const usePressReleaseState = (props, mouses = [0], keys = ['space']) => {
         window.addEventListener('keyup', handleRelease);
         // cleanups:
         return () => {
+            mounted = false;
             window.removeEventListener('mouseup', handleRelease);
             window.removeEventListener('keyup', handleRelease);
         };

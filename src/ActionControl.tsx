@@ -195,7 +195,10 @@ export const usePressReleaseState  = (props: ActionControlProps, mouses: number[
         
         
         // handlers:
+        let mounted = true;
         const handleRelease = () => {
+            if (!mounted) return; // `setTimeout` fires after the component was unmounted => ignore
+            
             setPressDn(false);
         }
         
@@ -209,6 +212,7 @@ export const usePressReleaseState  = (props: ActionControlProps, mouses: number[
         
         // cleanups:
         return () => {
+            mounted = false;
             window.removeEventListener('mouseup', handleRelease);
             window.removeEventListener('keyup',   handleRelease);
         }
