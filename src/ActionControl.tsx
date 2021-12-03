@@ -59,6 +59,10 @@ import {
 
 // nodestrap components:
 import {
+    // general types:
+    SemanticTag,
+    SemanticRole,
+    
     // hooks:
     useTestSemantic,
 }                           from '@nodestrap/element'
@@ -518,8 +522,8 @@ export function ActionControl<TElement extends HTMLElement = HTMLElement>(props:
     const reactRouterLink = isReactRouterLink(children);
     const nextLink        = !reactRouterLink && isNextLink(children);
     if (reactRouterLink || nextLink) {
-        const semanticTag  = props.semanticTag  ?? 'a'   ;
-        const semanticRole = props.semanticRole ?? 'link';
+        const semanticTag  : SemanticTag  = !props.semanticTag  ? 'a'    : (!Array.isArray(props.semanticTag)  ?  props.semanticTag  : (!props.semanticTag.includes('a')     ? props.semanticTag  : ['a'   , ...props.semanticTag ]));
+        const semanticRole : SemanticRole = !props.semanticRole ? 'link' : (!Array.isArray(props.semanticRole) ?  props.semanticRole : (!props.semanticRole.includes('link') ? props.semanticRole : ['link', ...props.semanticRole]));
         const [, , , isSemanticLink] = useTestSemantic({ tag: props.tag, role: props.role, semanticTag, semanticRole }, { semanticTag: 'a', semanticRole: 'link' });
         
         

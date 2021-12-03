@@ -339,8 +339,8 @@ export function ActionControl(props) {
     const reactRouterLink = isReactRouterLink(children);
     const nextLink = !reactRouterLink && isNextLink(children);
     if (reactRouterLink || nextLink) {
-        const semanticTag = props.semanticTag ?? 'a';
-        const semanticRole = props.semanticRole ?? 'link';
+        const semanticTag = !props.semanticTag ? 'a' : (!Array.isArray(props.semanticTag) ? props.semanticTag : (!props.semanticTag.includes('a') ? props.semanticTag : ['a', ...props.semanticTag]));
+        const semanticRole = !props.semanticRole ? 'link' : (!Array.isArray(props.semanticRole) ? props.semanticRole : (!props.semanticRole.includes('link') ? props.semanticRole : ['link', ...props.semanticRole]));
         const [, , , isSemanticLink] = useTestSemantic({ tag: props.tag, role: props.role, semanticTag, semanticRole }, { semanticTag: 'a', semanticRole: 'link' });
         const nestedComponent = React.cloneElement(mainComponent, {
             children: children.props.children,
