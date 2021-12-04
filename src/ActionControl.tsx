@@ -57,6 +57,11 @@ import {
     usePropReadOnly,
 }                           from '@nodestrap/accessibilities'
 
+// others libs:
+import type {
+    To,
+}                           from 'history'
+
 // nodestrap components:
 import {
     // general types:
@@ -432,7 +437,7 @@ export const [cssProps, cssDecls, cssVals, cssConfig] = createCssConfig(() => {
 
 
 // utilities:
-export const isReactRouterLink = (children: React.ReactNode|undefined): children is React.ReactElement<{ children?: React.ReactNode, passHref?: boolean, component?: React.ReactElement }> => {
+export const isReactRouterLink = (children: React.ReactNode|undefined): children is React.ReactElement<{ to?: To, children?: React.ReactNode, passHref?: boolean, component?: React.ReactElement }> => {
     return (
         React.isValidElement(children)
         &&
@@ -445,7 +450,7 @@ export const isReactRouterLink = (children: React.ReactNode|undefined): children
         !!children.props.to
     );
 };
-export const isNextLink = (children: React.ReactNode|undefined): children is React.ReactElement<{ children?: React.ReactNode, passHref?: boolean }> => {
+export const isNextLink = (children: React.ReactNode|undefined): children is React.ReactElement<{ href?: To, children?: React.ReactNode, passHref?: boolean }> => {
     return (
         React.isValidElement(children)
         &&
@@ -519,16 +524,19 @@ export function ActionControl<TElement extends HTMLElement = HTMLElement>(props:
         />
     );
     
+    const semanticTag  : SemanticTag  = !props.semanticTag  ? 'a'    : (!Array.isArray(props.semanticTag)  ?  props.semanticTag  : (!props.semanticTag.includes('a')     ? props.semanticTag  : ['a'   , ...props.semanticTag ]));
+    const semanticRole : SemanticRole = !props.semanticRole ? 'link' : (!Array.isArray(props.semanticRole) ?  props.semanticRole : (!props.semanticRole.includes('link') ? props.semanticRole : ['link', ...props.semanticRole]));
+    const [, , , isSemanticLink] = useTestSemantic({ tag: props.tag, role: props.role, semanticTag, semanticRole }, { semanticTag: 'a', semanticRole: 'link' });
+    
     const reactRouterLink = isReactRouterLink(children);
     const nextLink        = !reactRouterLink && isNextLink(children);
     if (reactRouterLink || nextLink) {
-        const semanticTag  : SemanticTag  = !props.semanticTag  ? 'a'    : (!Array.isArray(props.semanticTag)  ?  props.semanticTag  : (!props.semanticTag.includes('a')     ? props.semanticTag  : ['a'   , ...props.semanticTag ]));
-        const semanticRole : SemanticRole = !props.semanticRole ? 'link' : (!Array.isArray(props.semanticRole) ?  props.semanticRole : (!props.semanticRole.includes('link') ? props.semanticRole : ['link', ...props.semanticRole]));
-        const [, , , isSemanticLink] = useTestSemantic({ tag: props.tag, role: props.role, semanticTag, semanticRole }, { semanticTag: 'a', semanticRole: 'link' });
+        const link = children as React.ReactElement;
+        
         
         
         const nestedComponent = React.cloneElement(mainComponent, {
-            children: children.props.children,
+            children: link.props.children,
             
             // semantics:
             semanticTag,
@@ -538,10 +546,10 @@ export function ActionControl<TElement extends HTMLElement = HTMLElement>(props:
             ...(isSemanticLink ? { type: undefined } : {}),
         });
         
-        if (reactRouterLink) return React.cloneElement(children, { passHref: isSemanticLink, children: null, component:
+        if (reactRouterLink) return React.cloneElement(link, { passHref: isSemanticLink, children: null, component:
             nestedComponent
         });
-        return React.cloneElement(children, { passHref: isSemanticLink, children:
+        return React.cloneElement(link, { passHref: isSemanticLink, children:
             nestedComponent
         });
     } // if

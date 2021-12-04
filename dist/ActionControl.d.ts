@@ -1,6 +1,7 @@
 import { default as React } from 'react';
 import type { PropEx } from '@cssfn/css-types';
 import { StyleCollection } from '@cssfn/cssfn';
+import type { To } from 'history';
 import { ControlProps } from '@nodestrap/control';
 export interface PressReleaseVars {
     filter: any;
@@ -56,11 +57,13 @@ export declare const cssProps: import("@cssfn/css-config").Refs<{
     animRelease: (string | PropEx.Keyframes)[][];
 }>, cssConfig: import("@cssfn/css-config").CssConfigSettings;
 export declare const isReactRouterLink: (children: React.ReactNode | undefined) => children is React.ReactElement<{
+    to?: To | undefined;
     children?: React.ReactNode;
     passHref?: boolean | undefined;
     component?: React.ReactElement<any, string | React.JSXElementConstructor<any>> | undefined;
 }, string | React.JSXElementConstructor<any>>;
 export declare const isNextLink: (children: React.ReactNode | undefined) => children is React.ReactElement<{
+    href?: To | undefined;
     children?: React.ReactNode;
     passHref?: boolean | undefined;
 }, string | React.JSXElementConstructor<any>>;

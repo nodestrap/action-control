@@ -336,14 +336,15 @@ export function ActionControl(props) {
             // states:
             pressReleaseState.handleAnimationEnd(e);
         } }));
+    const semanticTag = !props.semanticTag ? 'a' : (!Array.isArray(props.semanticTag) ? props.semanticTag : (!props.semanticTag.includes('a') ? props.semanticTag : ['a', ...props.semanticTag]));
+    const semanticRole = !props.semanticRole ? 'link' : (!Array.isArray(props.semanticRole) ? props.semanticRole : (!props.semanticRole.includes('link') ? props.semanticRole : ['link', ...props.semanticRole]));
+    const [, , , isSemanticLink] = useTestSemantic({ tag: props.tag, role: props.role, semanticTag, semanticRole }, { semanticTag: 'a', semanticRole: 'link' });
     const reactRouterLink = isReactRouterLink(children);
     const nextLink = !reactRouterLink && isNextLink(children);
     if (reactRouterLink || nextLink) {
-        const semanticTag = !props.semanticTag ? 'a' : (!Array.isArray(props.semanticTag) ? props.semanticTag : (!props.semanticTag.includes('a') ? props.semanticTag : ['a', ...props.semanticTag]));
-        const semanticRole = !props.semanticRole ? 'link' : (!Array.isArray(props.semanticRole) ? props.semanticRole : (!props.semanticRole.includes('link') ? props.semanticRole : ['link', ...props.semanticRole]));
-        const [, , , isSemanticLink] = useTestSemantic({ tag: props.tag, role: props.role, semanticTag, semanticRole }, { semanticTag: 'a', semanticRole: 'link' });
+        const link = children;
         const nestedComponent = React.cloneElement(mainComponent, {
-            children: children.props.children,
+            children: link.props.children,
             // semantics:
             semanticTag,
             semanticRole,
@@ -351,9 +352,9 @@ export function ActionControl(props) {
             ...(isSemanticLink ? { type: undefined } : {}),
         });
         if (reactRouterLink)
-            return React.cloneElement(children, { passHref: isSemanticLink, children: null, component: nestedComponent
+            return React.cloneElement(link, { passHref: isSemanticLink, children: null, component: nestedComponent
             });
-        return React.cloneElement(children, { passHref: isSemanticLink, children: nestedComponent
+        return React.cloneElement(link, { passHref: isSemanticLink, children: nestedComponent
         });
     } // if
     return mainComponent;

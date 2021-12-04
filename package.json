@@ -1,6 +1,6 @@
 {
   "name": "@nodestrap/action-control",
-  "version": "4.0.8",
+  "version": "4.0.9",
   "description": "A generic element with press/release state.",
   "type": "module",
   "main": "dist/ActionControl.js",
@@ -42,6 +42,7 @@
     "@nodestrap/control": "^4.0.4",
     "@nodestrap/element": "^4.0.2",
     "@types/react": "^17.0.37",
+    "history": "^5.1.0",
     "react": "^17.0.2"
   }
 }
