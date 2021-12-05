@@ -354,9 +354,14 @@ export function ActionControl(props) {
         if (reactRouterLink)
             return React.cloneElement(link, { passHref: isSemanticLink, children: null, component: nestedComponent
             });
-        return React.cloneElement(link, { passHref: isSemanticLink, children: nestedComponent
+        return React.cloneElement(link, { passHref: isSemanticLink, children: React.createElement(Wrapper, null, nestedComponent)
         });
     } // if
     return mainComponent;
 }
 export { ActionControl as default };
+class Wrapper extends React.PureComponent {
+    render() {
+        return React.cloneElement(this.props.children, { href: this.props.href, onClick: this.props.onClick });
+    }
+}

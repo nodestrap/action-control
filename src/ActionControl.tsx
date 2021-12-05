@@ -550,10 +550,25 @@ export function ActionControl<TElement extends HTMLElement = HTMLElement>(props:
             nestedComponent
         });
         return React.cloneElement(link, { passHref: isSemanticLink, children:
-            nestedComponent
+            <Wrapper>
+                { nestedComponent }
+            </Wrapper>
         });
     } // if
     
     return mainComponent;
 }
 export { ActionControl as default }
+
+
+
+interface WrapperProps {
+    href?     : string
+    onClick?  : React.MouseEventHandler<HTMLElement>
+    children  : React.ReactElement
+}
+class Wrapper extends React.PureComponent<WrapperProps> {
+    render() {
+        return React.cloneElement(this.props.children, { href: this.props.href, onClick: this.props.onClick });
+    }
+}
