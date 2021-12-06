@@ -354,7 +354,7 @@ export function ActionControl(props) {
         if (reactRouterLink)
             return React.cloneElement(link, { passHref: isSemanticLink, children: null, component: nestedComponent
             });
-        return React.cloneElement(link, { passHref: isSemanticLink, children: React.createElement(Wrapper, null, nestedComponent)
+        return React.cloneElement(link, { passHref: isSemanticLink, children: React.createElement(Wrapper, { onClick: props.onClick }, nestedComponent)
         });
     } // if
     return mainComponent;

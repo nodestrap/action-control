@@ -550,7 +550,7 @@ export function ActionControl<TElement extends HTMLElement = HTMLElement>(props:
             nestedComponent
         });
         return React.cloneElement(link, { passHref: isSemanticLink, children:
-            <Wrapper>
+            <Wrapper onClick={props.onClick}>
                 { nestedComponent }
             </Wrapper>
         });
