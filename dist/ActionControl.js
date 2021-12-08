@@ -300,8 +300,8 @@ export const isReactRouterLink = (children) => {
             (typeof (children.type) === 'object')
         &&
             (typeof (children.type.render) === 'function')
-        &&
-            (children.type.render.name === 'LinkWithRef')
+        // &&
+        // ((children.type as any).render.name === 'LinkWithRef') // gone in production
         &&
             !!children.props.to);
 };
@@ -309,8 +309,8 @@ export const isNextLink = (children) => {
     return (React.isValidElement(children)
         &&
             (typeof (children.type) === 'function')
-        &&
-            (children.type.name === 'Link')
+        // &&
+        // (children.type.name === 'Link') // gone in production
         &&
             !!children.props.href);
 };

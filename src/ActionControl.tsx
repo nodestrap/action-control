@@ -444,8 +444,8 @@ export const isReactRouterLink = (children: React.ReactNode|undefined): children
         (typeof(children.type) === 'object')
         &&
         (typeof((children.type as any).render) === 'function')
-        &&
-        ((children.type as any).render.name === 'LinkWithRef')
+        // &&
+        // ((children.type as any).render.name === 'LinkWithRef') // gone in production
         &&
         !!children.props.to
     );
@@ -455,8 +455,8 @@ export const isNextLink = (children: React.ReactNode|undefined): children is Rea
         React.isValidElement(children)
         &&
         (typeof(children.type) === 'function')
-        &&
-        (children.type.name === 'Link')
+        // &&
+        // (children.type.name === 'Link') // gone in production
         &&
         !!children.props.href
     );
