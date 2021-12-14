@@ -378,7 +378,7 @@ export const useActionControlSheet = createUseSheet(() => [
             usesActionControlStates(),
         ]),
     ]),
-]);
+], /*sheetId :*/'5u3j6wjzxd'); // an unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
 
@@ -490,7 +490,7 @@ export function ActionControl<TElement extends HTMLElement = HTMLElement>(props:
     
     
     // jsx:
-    const children = props.children;
+    const childrenArr = React.Children.toArray(props.children);
     const mainComponent = (
         <Control<TElement>
             // other props:
@@ -528,15 +528,12 @@ export function ActionControl<TElement extends HTMLElement = HTMLElement>(props:
     const semanticRole : SemanticRole = !props.semanticRole ? 'link' : (!Array.isArray(props.semanticRole) ?  props.semanticRole : (!props.semanticRole.includes('link') ? props.semanticRole : ['link', ...props.semanticRole]));
     const [, , , isSemanticLink] = useTestSemantic({ tag: props.tag, role: props.role, semanticTag, semanticRole }, { semanticTag: 'a', semanticRole: 'link' });
     
-    const reactRouterLink = isReactRouterLink(children);
-    const nextLink        = !reactRouterLink && isNextLink(children);
-    if (reactRouterLink || nextLink) {
-        const link = children as React.ReactElement;
-        
-        
-        
+    const reactRouterLink = childrenArr.find((child) => isReactRouterLink(child));
+    const nextLink        = (!reactRouterLink || undefined) && childrenArr.find((child) => isNextLink(child));
+    const link            = (reactRouterLink ?? nextLink) as React.ReactElement<React.PropsWithChildren<{}>>|undefined;
+    if (link) {
         const nestedComponent = React.cloneElement(mainComponent, {
-            children: link.props.children,
+            children: childrenArr.flatMap((child) => (child !== link) ? [child] : React.Children.toArray(link.props.children)),
             
             // semantics:
             semanticTag,
@@ -546,14 +543,14 @@ export function ActionControl<TElement extends HTMLElement = HTMLElement>(props:
             ...(isSemanticLink ? { type: undefined } : {}),
         });
         
-        if (reactRouterLink) return React.cloneElement(link, { passHref: isSemanticLink, children: null, component:
+        if (reactRouterLink) return React.cloneElement(link, ({ passHref: isSemanticLink, children: null, component:
             nestedComponent
-        });
-        return React.cloneElement(link, { passHref: isSemanticLink, children:
+        } as {}));
+        return React.cloneElement(link, ({ passHref: isSemanticLink, children:
             <Wrapper onClick={props.onClick}>
                 { nestedComponent }
             </Wrapper>
-        });
+        } as {}));
     } // if
     
     return mainComponent;

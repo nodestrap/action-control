@@ -254,7 +254,7 @@ export const useActionControlSheet = createUseSheet(() => [
             usesActionControlStates(),
         ]),
     ]),
-]);
+], /*sheetId :*/ '5u3j6wjzxd'); // an unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 // configs:
 export const [cssProps, cssDecls, cssVals, cssConfig] = createCssConfig(() => {
     // dependencies:
@@ -322,7 +322,7 @@ export function ActionControl(props) {
     // fn props:
     const propEnabled = usePropEnabled(props);
     // jsx:
-    const children = props.children;
+    const childrenArr = React.Children.toArray(props.children);
     const mainComponent = (React.createElement(Control, { ...props, 
         // semantics:
         semanticTag: props.semanticTag ?? [null, 'button', 'a'], semanticRole: props.semanticRole ?? ['button', 'link'], 
@@ -339,12 +339,12 @@ export function ActionControl(props) {
     const semanticTag = !props.semanticTag ? 'a' : (!Array.isArray(props.semanticTag) ? props.semanticTag : (!props.semanticTag.includes('a') ? props.semanticTag : ['a', ...props.semanticTag]));
     const semanticRole = !props.semanticRole ? 'link' : (!Array.isArray(props.semanticRole) ? props.semanticRole : (!props.semanticRole.includes('link') ? props.semanticRole : ['link', ...props.semanticRole]));
     const [, , , isSemanticLink] = useTestSemantic({ tag: props.tag, role: props.role, semanticTag, semanticRole }, { semanticTag: 'a', semanticRole: 'link' });
-    const reactRouterLink = isReactRouterLink(children);
-    const nextLink = !reactRouterLink && isNextLink(children);
-    if (reactRouterLink || nextLink) {
-        const link = children;
+    const reactRouterLink = childrenArr.find((child) => isReactRouterLink(child));
+    const nextLink = (!reactRouterLink || undefined) && childrenArr.find((child) => isNextLink(child));
+    const link = (reactRouterLink ?? nextLink);
+    if (link) {
         const nestedComponent = React.cloneElement(mainComponent, {
-            children: link.props.children,
+            children: childrenArr.flatMap((child) => (child !== link) ? [child] : React.Children.toArray(link.props.children)),
             // semantics:
             semanticTag,
             semanticRole,
