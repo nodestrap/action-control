@@ -190,7 +190,7 @@ export const usePressReleaseState  = (props: ActionControlProps, mouses: number[
     
     
     // resets:
-    if (!propEditable) {
+    if (!propEditable && pressDn) {
         setPressDn(false); // lost press because the control is not editable, when the control is re-editable => still lost press
     } // if
 

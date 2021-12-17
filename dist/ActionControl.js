@@ -99,7 +99,7 @@ export const usePressReleaseState = (props, mouses = [0], keys = ['space']) => {
     const [animating, setAnimating] = useState(null); // null => no-animation, true => pressing-animation, false => releasing-animation
     const [pressDn, setPressDn] = useState(false); // uncontrollable (dynamic) state: true => user press, false => user release
     // resets:
-    if (!propEditable) {
+    if (!propEditable && pressDn) {
         setPressDn(false); // lost press because the control is not editable, when the control is re-editable => still lost press
     } // if
     /*
