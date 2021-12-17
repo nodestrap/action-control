@@ -3,6 +3,7 @@ import {
     default as React,
     useState,
     useEffect,
+    useRef,
 }                           from 'react'         // base technology of our nodestrap components
 
 // cssfn:
@@ -197,8 +198,21 @@ export const usePressReleaseState  = (props: ActionControlProps, mouses: number[
         setPressed(pressFn);   // remember the last change
         setAnimating(pressFn); // start pressing-animation/releasing-animation
     }
-
-
+    
+    
+    
+    const isMounted = useRef<boolean>(false);
+    useEffect(() => {
+        // setups:
+        isMounted.current = true;
+        
+        
+        
+        // cleanups:
+        return () => {
+            isMounted.current = false;
+        }
+    }, []); // (re)run the setups & cleanups once
     
     useEffect(() => {
         if (!propEnabled)              return; // control is disabled => no response required
@@ -208,25 +222,27 @@ export const usePressReleaseState  = (props: ActionControlProps, mouses: number[
         
         
         // handlers:
-        let mounted = true;
+        const handleReleaseLate = () => {
+            setTimeout(handleRelease, 0); // setTimeout => make sure the `mouseup` event fires after the `click` event, so the user has a chance to change the `press` prop
+            /* do not use `Promise.resolve().then(handleRelease)` because it's not fired *after* the `click` event */
+        };
         const handleRelease = () => {
-            if (!mounted) return; // `setTimeout` fires after the component was unmounted => ignore
+            if (!isMounted.current) return; // `setTimeout` fires after the component was unmounted => ignore
             
             setPressDn(false);
-        }
+        };
         
         
         
         // setups:
-        window.addEventListener('mouseup', () => setTimeout(handleRelease, 0)); // setTimeout => make sure the `mouseup` event fires after the `click` event, so the user has a chance to change the `press` prop
+        window.addEventListener('mouseup', handleReleaseLate);
         window.addEventListener('keyup',   handleRelease);
         
         
         
         // cleanups:
         return () => {
-            mounted = false;
-            window.removeEventListener('mouseup', handleRelease);
+            window.removeEventListener('mouseup', handleReleaseLate);
             window.removeEventListener('keyup',   handleRelease);
         }
     }, [propEnabled, propReadOnly, props.press]); // (re)run the setups & cleanups on every time the prop** changes
