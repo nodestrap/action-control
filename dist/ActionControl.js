@@ -2,11 +2,11 @@
 import { default as React, useState, useEffect, useRef, } from 'react'; // base technology of our nodestrap components
 import { 
 // compositions:
-composition, mainComposition, imports, 
-// layouts:
-layout, vars, 
+mainComposition, 
+// styles:
+style, vars, imports, 
 // rules:
-states, rule, } from '@cssfn/cssfn'; // cssfn core
+rule, states, } from '@cssfn/cssfn'; // cssfn core
 import { 
 // hooks:
 createUseSheet, } from '@cssfn/react-cssfn'; // cssfn for react
@@ -60,31 +60,31 @@ export const isRelease = (styles) => rule([selectorIsReleasing, selectorIsReleas
 export const isPressReleasing = (styles) => rule([selectorIsPressing, selectorIsPressed, selectorIsReleasing], styles);
 /**
  * Uses press & release states.
- * @returns A `[Factory<StyleCollection>, ReadonlyRefs, ReadonlyDecls]` represents press & release state definitions.
+ * @returns A `[Factory<Rule>, ReadonlyRefs, ReadonlyDecls]` represents press & release state definitions.
  */
 export const usesPressReleaseState = () => {
     return [
-        () => composition([
-            states([
-                isPressed([
-                    vars({
+        () => style({
+            ...states([
+                isPressed({
+                    ...vars({
                         [pressReleaseDecls.filter]: cssProps.filterPress,
                     }),
-                ]),
-                isPressing([
-                    vars({
+                }),
+                isPressing({
+                    ...vars({
                         [pressReleaseDecls.filter]: cssProps.filterPress,
                         [pressReleaseDecls.anim]: cssProps.animPress,
                     }),
-                ]),
-                isReleasing([
-                    vars({
+                }),
+                isReleasing({
+                    ...vars({
                         [pressReleaseDecls.filter]: cssProps.filterPress,
                         [pressReleaseDecls.anim]: cssProps.animRelease,
                     }),
-                ]),
+                }),
             ]),
-        ]),
+        }),
         pressReleaseRefs,
         pressReleaseDecls,
     ];
@@ -205,67 +205,63 @@ export const usePressReleaseState = (props, mouses = [0], keys = ['space']) => {
 //#endregion pressRelease
 // styles:
 export const usesActionControlLayout = () => {
-    return composition([
-        imports([
+    return style({
+        ...imports([
             // layouts:
             usesControlLayout(),
         ]),
-        layout({
+        ...style({
             // accessibilities:
             userSelect: 'none',
             // customize:
             ...usesGeneralProps(cssProps), // apply general cssProps
         }),
-    ]);
+    });
 };
 export const usesActionControlVariants = () => {
     // dependencies:
     // layouts:
-    const [sizes] = usesSizeVariant((sizeName) => composition([
-        layout({
-            // overwrites propName = propName{SizeName}:
-            ...overwriteProps(cssDecls, usesSuffixedProps(cssProps, sizeName)),
-        }),
-    ]));
-    return composition([
-        imports([
+    const [sizes] = usesSizeVariant((sizeName) => style({
+        // overwrites propName = propName{SizeName}:
+        ...overwriteProps(cssDecls, usesSuffixedProps(cssProps, sizeName)),
+    }));
+    return style({
+        ...imports([
             // variants:
             usesControlVariants(),
             // layouts:
             sizes(),
         ]),
-    ]);
+    });
 };
 export const usesActionControlStates = () => {
     // dependencies:
     // states:
     const [pressRelease] = usesPressReleaseState();
-    return composition([
-        imports([
+    return style({
+        ...imports([
             // states:
             usesControlStates(),
             pressRelease(),
         ]),
-        states([
-            isPress([
-                imports([
+        ...states([
+            isPress({
+                ...imports([
                     markActive(),
                 ]),
-            ]),
+            }),
         ]),
-    ]);
+    });
 };
 export const useActionControlSheet = createUseSheet(() => [
-    mainComposition([
-        imports([
-            // layouts:
-            usesActionControlLayout(),
-            // variants:
-            usesActionControlVariants(),
-            // states:
-            usesActionControlStates(),
-        ]),
-    ]),
+    mainComposition(imports([
+        // layouts:
+        usesActionControlLayout(),
+        // variants:
+        usesActionControlVariants(),
+        // states:
+        usesActionControlStates(),
+    ])),
 ], /*sheetId :*/ '5u3j6wjzxd'); // an unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 // configs:
 export const [cssProps, cssDecls, cssVals, cssConfig] = createCssConfig(() => {

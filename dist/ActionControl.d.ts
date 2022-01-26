@@ -7,18 +7,18 @@ export interface PressReleaseVars {
     filter: any;
     anim: any;
 }
-export declare const isPressed: (styles: StyleCollection) => import("@cssfn/cssfn").RuleEntry;
-export declare const isPressing: (styles: StyleCollection) => import("@cssfn/cssfn").RuleEntry;
-export declare const isReleasing: (styles: StyleCollection) => import("@cssfn/cssfn").RuleEntry;
-export declare const isReleased: (styles: StyleCollection) => import("@cssfn/cssfn").RuleEntry;
-export declare const isPress: (styles: StyleCollection) => import("@cssfn/cssfn").RuleEntry;
-export declare const isRelease: (styles: StyleCollection) => import("@cssfn/cssfn").RuleEntry;
-export declare const isPressReleasing: (styles: StyleCollection) => import("@cssfn/cssfn").RuleEntry;
+export declare const isPressed: (styles: StyleCollection) => import("@cssfn/cssfn").Rule;
+export declare const isPressing: (styles: StyleCollection) => import("@cssfn/cssfn").Rule;
+export declare const isReleasing: (styles: StyleCollection) => import("@cssfn/cssfn").Rule;
+export declare const isReleased: (styles: StyleCollection) => import("@cssfn/cssfn").Rule;
+export declare const isPress: (styles: StyleCollection) => import("@cssfn/cssfn").Rule;
+export declare const isRelease: (styles: StyleCollection) => import("@cssfn/cssfn").Rule;
+export declare const isPressReleasing: (styles: StyleCollection) => import("@cssfn/cssfn").Rule;
 /**
  * Uses press & release states.
- * @returns A `[Factory<StyleCollection>, ReadonlyRefs, ReadonlyDecls]` represents press & release state definitions.
+ * @returns A `[Factory<Rule>, ReadonlyRefs, ReadonlyDecls]` represents press & release state definitions.
  */
-export declare const usesPressReleaseState: () => readonly [() => StyleCollection, import("@cssfn/css-var").ReadonlyRefs<PressReleaseVars>, import("@cssfn/css-var").ReadonlyDecls<PressReleaseVars>];
+export declare const usesPressReleaseState: () => readonly [() => import("@cssfn/cssfn").Rule, import("@cssfn/css-var").ReadonlyRefs<PressReleaseVars>, import("@cssfn/css-var").ReadonlyDecls<PressReleaseVars>];
 export declare const usePressReleaseState: (props: ActionControlProps, mouses?: number[] | null, keys?: string[] | null) => {
     /**
      * partially/fully press
@@ -30,9 +30,9 @@ export declare const usePressReleaseState: (props: ActionControlProps, mouses?: 
     handleKeyDown: React.KeyboardEventHandler<HTMLElement>;
     handleAnimationEnd: (e: React.AnimationEvent<HTMLElement>) => void;
 };
-export declare const usesActionControlLayout: () => StyleCollection;
-export declare const usesActionControlVariants: () => StyleCollection;
-export declare const usesActionControlStates: () => StyleCollection;
+export declare const usesActionControlLayout: () => import("@cssfn/cssfn").Rule;
+export declare const usesActionControlVariants: () => import("@cssfn/cssfn").Rule;
+export declare const usesActionControlStates: () => import("@cssfn/cssfn").Rule;
 export declare const useActionControlSheet: import("@cssfn/types").Factory<import("jss").Classes<"main">>;
 export declare const cssProps: import("@cssfn/css-config").Refs<{
     cursor: string;

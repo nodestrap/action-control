@@ -17,21 +17,20 @@ import {
     
     
     // compositions:
-    composition,
     mainComposition,
+    
+    
+    
+    // styles:
+    style,
+    vars,
     imports,
     
     
     
-    // layouts:
-    layout,
-    vars,
-    
-    
-    
     // rules:
-    states,
     rule,
+    states,
 }                           from '@cssfn/cssfn'       // cssfn core
 import {
     // hooks:
@@ -143,31 +142,31 @@ export const isPressReleasing = (styles: StyleCollection) => rule([selectorIsPre
 
 /**
  * Uses press & release states.
- * @returns A `[Factory<StyleCollection>, ReadonlyRefs, ReadonlyDecls]` represents press & release state definitions.
+ * @returns A `[Factory<Rule>, ReadonlyRefs, ReadonlyDecls]` represents press & release state definitions.
  */
 export const usesPressReleaseState = () => {
     return [
-        () => composition([
-            states([
-                isPressed([
-                    vars({
+        () => style({
+            ...states([
+                isPressed({
+                    ...vars({
                         [pressReleaseDecls.filter] : cssProps.filterPress,
                     }),
-                ]),
-                isPressing([
-                    vars({
+                }),
+                isPressing({
+                    ...vars({
                         [pressReleaseDecls.filter] : cssProps.filterPress,
                         [pressReleaseDecls.anim  ] : cssProps.animPress,
                     }),
-                ]),
-                isReleasing([
-                    vars({
+                }),
+                isReleasing({
+                    ...vars({
                         [pressReleaseDecls.filter] : cssProps.filterPress,
                         [pressReleaseDecls.anim  ] : cssProps.animRelease,
                     }),
-                ]),
+                }),
             ]),
-        ]),
+        }),
         pressReleaseRefs,
         pressReleaseDecls,
     ] as const;
@@ -324,12 +323,12 @@ export const usePressReleaseState  = (props: ActionControlProps, mouses: number[
 
 // styles:
 export const usesActionControlLayout = () => {
-    return composition([
-        imports([
+    return style({
+        ...imports([
             // layouts:
             usesControlLayout(),
         ]),
-        layout({
+        ...style({
             // accessibilities:
             userSelect : 'none', // disable selecting text (double clicking not causing selecting text)
             
@@ -338,30 +337,28 @@ export const usesActionControlLayout = () => {
             // customize:
             ...usesGeneralProps(cssProps), // apply general cssProps
         }),
-    ]);
+    });
 };
 export const usesActionControlVariants = () => {
     // dependencies:
     
     // layouts:
-    const [sizes] = usesSizeVariant((sizeName) => composition([
-        layout({
-            // overwrites propName = propName{SizeName}:
-            ...overwriteProps(cssDecls, usesSuffixedProps(cssProps, sizeName)),
-        }),
-    ]));
+    const [sizes] = usesSizeVariant((sizeName) => style({
+        // overwrites propName = propName{SizeName}:
+        ...overwriteProps(cssDecls, usesSuffixedProps(cssProps, sizeName)),
+    }));
     
     
     
-    return composition([
-        imports([
+    return style({
+        ...imports([
             // variants:
             usesControlVariants(),
             
             // layouts:
             sizes(),
         ]),
-    ]);
+    });
 };
 export const usesActionControlStates = () => {
     // dependencies:
@@ -371,24 +368,24 @@ export const usesActionControlStates = () => {
     
     
     
-    return composition([
-        imports([
+    return style({
+        ...imports([
             // states:
             usesControlStates(),
             pressRelease(),
         ]),
-        states([
-            isPress([
-                imports([
+        ...states([
+            isPress({
+                ...imports([
                     markActive(),
                 ]),
-            ]),
+            }),
         ]),
-    ]);
+    });
 };
 
 export const useActionControlSheet = createUseSheet(() => [
-    mainComposition([
+    mainComposition(
         imports([
             // layouts:
             usesActionControlLayout(),
@@ -399,7 +396,7 @@ export const useActionControlSheet = createUseSheet(() => [
             // states:
             usesActionControlStates(),
         ]),
-    ]),
+    ),
 ], /*sheetId :*/'5u3j6wjzxd'); // an unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
