@@ -456,30 +456,36 @@ export const [cssProps, cssDecls, cssVals, cssConfig] = createCssConfig(() => {
 
 
 // utilities:
-export const isReactRouterLink = (children: React.ReactNode|undefined): children is React.ReactElement<{ to?: To, children?: React.ReactNode, passHref?: boolean, component?: React.ReactElement }> => {
+type SingleChild = React.ReactChild | React.ReactFragment | React.ReactPortal
+export const isReactRouterLink = (child: SingleChild): child is React.ReactElement<{ to?: To, children?: React.ReactNode, passHref?: boolean, component?: React.ReactElement }> => {
     return (
-        React.isValidElement(children)
+        React.isValidElement(child)
         &&
-        (typeof(children.type) === 'object')
+        (typeof(child.type) === 'object')
         &&
-        (typeof((children.type as any).render) === 'function')
+        (typeof((child.type as any).render) === 'function')
         // &&
         // ((children.type as any).render.name === 'LinkWithRef') // gone in production
         &&
-        !!children.props.to
+        !!child.props.to
     );
 };
-export const isNextLink = (children: React.ReactNode|undefined): children is React.ReactElement<{ href?: To, children?: React.ReactNode, passHref?: boolean }> => {
+export const isNextLink        = (child: SingleChild): child is React.ReactElement<{ href?: To, children?: React.ReactNode, passHref?: boolean }> => {
     return (
-        React.isValidElement(children)
+        React.isValidElement(child)
         &&
-        (typeof(children.type) === 'function')
+        (typeof(child.type) === 'function')
         // &&
         // (children.type.name === 'Link') // gone in production
         &&
-        !!children.props.href
+        !!child.props.href
     );
 };
+export const isClientSideLink  = (children: React.ReactNode|undefined): To|undefined => React.Children.toArray(children).reduce((to, child, index, array) => {
+    if (isReactRouterLink(child)) { array.splice(1); return child.props.to;   }
+    if (isNextLink(child))        { array.splice(1); return child.props.href; }
+    return undefined;
+}, undefined as (To|undefined));
 
 
 
@@ -543,29 +549,26 @@ export function ActionControl<TElement extends HTMLElement = HTMLElement>(props:
         />
     );
     
-    const semanticTag  : SemanticTag  = !props.semanticTag  ? 'a'    : (!Array.isArray(props.semanticTag)  ?  props.semanticTag  : (!props.semanticTag.includes('a')     ? props.semanticTag  : ['a'   , ...props.semanticTag ]));
-    const semanticRole : SemanticRole = !props.semanticRole ? 'link' : (!Array.isArray(props.semanticRole) ?  props.semanticRole : (!props.semanticRole.includes('link') ? props.semanticRole : ['link', ...props.semanticRole]));
+    const semanticTag  : SemanticTag  = !props.semanticTag  ? 'a'    : (!Array.isArray(props.semanticTag)  ?  props.semanticTag  : (props.semanticTag.includes('a')     ? props.semanticTag  : ['a'   , ...props.semanticTag ]));
+    const semanticRole : SemanticRole = !props.semanticRole ? 'link' : (!Array.isArray(props.semanticRole) ?  props.semanticRole : (props.semanticRole.includes('link') ? props.semanticRole : ['link', ...props.semanticRole]));
     const [, , , isSemanticLink] = useTestSemantic({ tag: props.tag, role: props.role, semanticTag, semanticRole }, { semanticTag: 'a', semanticRole: 'link' });
     
     const reactRouterLink = childrenArr.find((child) => isReactRouterLink(child));
     const nextLink        = (!reactRouterLink || undefined) && childrenArr.find((child) => isNextLink(child));
-    const link            = (reactRouterLink ?? nextLink) as React.ReactElement<React.PropsWithChildren<{}>>|undefined;
-    if (link) {
+    const clientSideLink  = (reactRouterLink ?? nextLink) as React.ReactElement<React.PropsWithChildren<{}>>|undefined;
+    if (clientSideLink) {
         const nestedComponent = React.cloneElement(mainComponent, {
-            children: childrenArr.flatMap((child) => (child !== link) ? [child] : React.Children.toArray(link.props.children)),
+            children: childrenArr.flatMap((child) => (child !== clientSideLink) ? [child] : React.Children.toArray(clientSideLink.props.children)),
             
             // semantics:
             semanticTag,
             semanticRole,
-            
-            // remove Button props:
-            ...(isSemanticLink ? { type: undefined } : {}),
         });
         
-        if (reactRouterLink) return React.cloneElement(link, ({ passHref: isSemanticLink, children: null, component:
+        if (reactRouterLink) return React.cloneElement(clientSideLink, ({ passHref: isSemanticLink, children: null, component:
             nestedComponent
         } as {}));
-        return React.cloneElement(link, ({ passHref: isSemanticLink, children:
+        return React.cloneElement(clientSideLink, ({ passHref: isSemanticLink, children:
             <Wrapper onClick={props.onClick}>
                 { nestedComponent }
             </Wrapper>

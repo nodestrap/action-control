@@ -301,27 +301,37 @@ export const [cssProps, cssDecls, cssVals, cssConfig] = createCssConfig(() => {
         //#endregion animations
     };
 }, { prefix: 'act' });
-// utilities:
-export const isReactRouterLink = (children) => {
-    return (React.isValidElement(children)
+export const isReactRouterLink = (child) => {
+    return (React.isValidElement(child)
         &&
-            (typeof (children.type) === 'object')
+            (typeof (child.type) === 'object')
         &&
-            (typeof (children.type.render) === 'function')
+            (typeof (child.type.render) === 'function')
         // &&
         // ((children.type as any).render.name === 'LinkWithRef') // gone in production
         &&
-            !!children.props.to);
+            !!child.props.to);
 };
-export const isNextLink = (children) => {
-    return (React.isValidElement(children)
+export const isNextLink = (child) => {
+    return (React.isValidElement(child)
         &&
-            (typeof (children.type) === 'function')
+            (typeof (child.type) === 'function')
         // &&
         // (children.type.name === 'Link') // gone in production
         &&
-            !!children.props.href);
+            !!child.props.href);
 };
+export const isClientSideLink = (children) => React.Children.toArray(children).reduce((to, child, index, array) => {
+    if (isReactRouterLink(child)) {
+        array.splice(1);
+        return child.props.to;
+    }
+    if (isNextLink(child)) {
+        array.splice(1);
+        return child.props.href;
+    }
+    return undefined;
+}, undefined);
 export function ActionControl(props) {
     // styles:
     const sheet = useActionControlSheet();
@@ -344,25 +354,23 @@ export function ActionControl(props) {
             // states:
             pressReleaseState.handleAnimationEnd(e);
         } }));
-    const semanticTag = !props.semanticTag ? 'a' : (!Array.isArray(props.semanticTag) ? props.semanticTag : (!props.semanticTag.includes('a') ? props.semanticTag : ['a', ...props.semanticTag]));
-    const semanticRole = !props.semanticRole ? 'link' : (!Array.isArray(props.semanticRole) ? props.semanticRole : (!props.semanticRole.includes('link') ? props.semanticRole : ['link', ...props.semanticRole]));
+    const semanticTag = !props.semanticTag ? 'a' : (!Array.isArray(props.semanticTag) ? props.semanticTag : (props.semanticTag.includes('a') ? props.semanticTag : ['a', ...props.semanticTag]));
+    const semanticRole = !props.semanticRole ? 'link' : (!Array.isArray(props.semanticRole) ? props.semanticRole : (props.semanticRole.includes('link') ? props.semanticRole : ['link', ...props.semanticRole]));
     const [, , , isSemanticLink] = useTestSemantic({ tag: props.tag, role: props.role, semanticTag, semanticRole }, { semanticTag: 'a', semanticRole: 'link' });
     const reactRouterLink = childrenArr.find((child) => isReactRouterLink(child));
     const nextLink = (!reactRouterLink || undefined) && childrenArr.find((child) => isNextLink(child));
-    const link = (reactRouterLink ?? nextLink);
-    if (link) {
+    const clientSideLink = (reactRouterLink ?? nextLink);
+    if (clientSideLink) {
         const nestedComponent = React.cloneElement(mainComponent, {
-            children: childrenArr.flatMap((child) => (child !== link) ? [child] : React.Children.toArray(link.props.children)),
+            children: childrenArr.flatMap((child) => (child !== clientSideLink) ? [child] : React.Children.toArray(clientSideLink.props.children)),
             // semantics:
             semanticTag,
             semanticRole,
-            // remove Button props:
-            ...(isSemanticLink ? { type: undefined } : {}),
         });
         if (reactRouterLink)
-            return React.cloneElement(link, { passHref: isSemanticLink, children: null, component: nestedComponent
+            return React.cloneElement(clientSideLink, { passHref: isSemanticLink, children: null, component: nestedComponent
             });
-        return React.cloneElement(link, { passHref: isSemanticLink, children: React.createElement(Wrapper, { onClick: props.onClick }, nestedComponent)
+        return React.cloneElement(clientSideLink, { passHref: isSemanticLink, children: React.createElement(Wrapper, { onClick: props.onClick }, nestedComponent)
         });
     } // if
     return mainComponent;

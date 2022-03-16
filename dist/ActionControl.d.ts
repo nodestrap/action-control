@@ -56,17 +56,19 @@ export declare const cssProps: import("@cssfn/css-config").Refs<{
     animPress: (string | PropEx.Keyframes)[][];
     animRelease: (string | PropEx.Keyframes)[][];
 }>, cssConfig: import("@cssfn/css-config").CssConfigSettings;
-export declare const isReactRouterLink: (children: React.ReactNode | undefined) => children is React.ReactElement<{
+declare type SingleChild = React.ReactChild | React.ReactFragment | React.ReactPortal;
+export declare const isReactRouterLink: (child: SingleChild) => child is React.ReactElement<{
     to?: To | undefined;
     children?: React.ReactNode;
     passHref?: boolean | undefined;
     component?: React.ReactElement<any, string | React.JSXElementConstructor<any>> | undefined;
 }, string | React.JSXElementConstructor<any>>;
-export declare const isNextLink: (children: React.ReactNode | undefined) => children is React.ReactElement<{
+export declare const isNextLink: (child: SingleChild) => child is React.ReactElement<{
     href?: To | undefined;
     children?: React.ReactNode;
     passHref?: boolean | undefined;
 }, string | React.JSXElementConstructor<any>>;
+export declare const isClientSideLink: (children: React.ReactNode | undefined) => To | undefined;
 export interface ActionControlProps<TElement extends HTMLElement = HTMLElement> extends ControlProps<TElement> {
     press?: boolean;
 }
