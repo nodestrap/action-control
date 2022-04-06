@@ -332,6 +332,10 @@ export const isClientSideLink = (children) => React.Children.toArray(children).r
     }
     return undefined;
 }, undefined);
+// handlers:
+const handleClickDisabled = (e) => {
+    e.stopPropagation();
+};
 export function ActionControl(props) {
     // styles:
     const sheet = useActionControlSheet();
@@ -349,7 +353,7 @@ export function ActionControl(props) {
             pressReleaseState.class,
         ], 
         // events:
-        onClick: (propEnabled || undefined) && props.onClick, onMouseDown: (e) => { props.onMouseDown?.(e); pressReleaseState.handleMouseDown(e); }, onKeyDown: (e) => { props.onKeyDown?.(e); pressReleaseState.handleKeyDown(e); }, onAnimationEnd: (e) => {
+        onClick: propEnabled ? props.onClick : handleClickDisabled, onMouseDown: (e) => { props.onMouseDown?.(e); pressReleaseState.handleMouseDown(e); }, onKeyDown: (e) => { props.onKeyDown?.(e); pressReleaseState.handleKeyDown(e); }, onAnimationEnd: (e) => {
             props.onAnimationEnd?.(e);
             // states:
             pressReleaseState.handleAnimationEnd(e);

@@ -489,6 +489,13 @@ export const isClientSideLink  = (children: React.ReactNode|undefined): To|undef
 
 
 
+// handlers:
+const handleClickDisabled : React.MouseEventHandler<HTMLElement> = (e) => {
+    e.stopPropagation();
+}
+
+
+
 // react components:
 
 export interface ActionControlProps<TElement extends HTMLElement = HTMLElement>
@@ -535,7 +542,7 @@ export function ActionControl<TElement extends HTMLElement = HTMLElement>(props:
             
             
             // events:
-            onClick={(propEnabled || undefined) && props.onClick} // ignores onClick if disabled
+            onClick={propEnabled ? props.onClick : handleClickDisabled} // ignores onClick if disabled
             onMouseDown={(e) => { props.onMouseDown?.(e); pressReleaseState.handleMouseDown(e); }}
             onKeyDown=  {(e) => { props.onKeyDown?.(e);   pressReleaseState.handleKeyDown(e);   }}
             onAnimationEnd={(e) => {
